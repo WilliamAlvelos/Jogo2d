@@ -5,6 +5,9 @@ var x = 10;
 var image, audio, backgroundMusic;
 
 
+var xInimigos = 90;
+
+
 function draw() {
 	ctx.clearRect(0, 0, W, H);
 	
@@ -27,7 +30,6 @@ function criarTela(){
 	audio = document.getElementById("audio");
 	image = document.getElementById("trump");
 	backgroundMusic = document.getElementById("backgroundMusic");
-
 
 	x = window.innerWidth/2 - 120;
 }
@@ -76,6 +78,19 @@ function atira(){
 	audio.play();
 }
 
+
+function criaInimigos(){
+
+	 for (var i = 1; i < 14; i++) { 
+	 	for(var j = 1; j < 5; j++){
+	 		ctx.fillRect(xInimigos + i*100,80*j,50,50);
+	 	}
+	 }
+
+
+
+}
+
 function desenhar(){
 	
 	ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
@@ -84,6 +99,9 @@ function desenhar(){
 	ctx.drawImage(image,x,window.innerHeight - 210,125,155);
 
 	backgroundMusic.play();
+
+	criaInimigos();
+
 
 	//ctx.moveTo(300, 300);
 	//ctx.lineTo(280, 320);
