@@ -4,8 +4,17 @@ var x = 10;
 
 var image, audio, backgroundMusic;
 
-
 var xInimigos = 90;
+var yInimigos = 0;
+
+var andandoSentido = 0;
+
+/*
+	0 andando para direita
+	1 andando para baixo
+	2 andando para esquerda
+	3 andando para cima
+*/
 
 
 function draw() {
@@ -36,8 +45,55 @@ function criarTela(){
 
 function atualizar(){
 	desenhar();
+	
+	//anda para direita
+	if(andandoSentido == 0){
+		if(xInimigos < 200){
+			xInimigos++;
+		}else{
+			andandoSentido = 1;
+		}
+	}
+
+
+	//anda para baixo
+
+	if(andandoSentido == 1){
+		if(yInimigos < 50){
+			yInimigos++;
+		}else{
+			andandoSentido++;
+		}
+	}
+
+	//andando para esquerda
+
+	if(andandoSentido == 2){
+		if(xInimigos > -90){
+			xInimigos--;
+		}else{
+			andandoSentido = 3;
+		}
+	}
+
+	//andando para cima
+	if(andandoSentido == 3){
+		if(yInimigos > -50){
+			yInimigos--;
+		}else{
+			andandoSentido = 0;
+		}
+	}
+
+
+
+
+
 	window.requestAnimationFrame(atualizar);
 }
+
+
+
 
 document.onkeypress = function(e){ 
 	if(e.which == 37){
@@ -45,8 +101,6 @@ document.onkeypress = function(e){
 	}else if(e.which == 39){
 		x+=20;
 	}
-
-
 
 	if(e.which == 32){
 		atira();
@@ -83,7 +137,7 @@ function criaInimigos(){
 
 	 for (var i = 1; i < 14; i++) { 
 	 	for(var j = 1; j < 5; j++){
-	 		ctx.fillRect(xInimigos + i*100,80*j,50,50);
+	 		ctx.fillRect(xInimigos + i*80,60*j + yInimigos,50,50);
 	 	}
 	 }
 
