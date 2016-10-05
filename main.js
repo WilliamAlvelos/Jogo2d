@@ -10,10 +10,10 @@ var yAntigo = 0;
 
 var andandoSentido = 0;
 
-
+//lista de inimigos
 var enemies = [];
 
-
+//bala que so vai ser atirada uma vez pelo player
 var bullet;
 
 
@@ -24,6 +24,79 @@ var bullet;
 	2 andando para esquerda
 	3 andando para cima
 */
+
+function Enemy(I){
+	I = I || {};
+
+  I.active = true;
+  I.width = 30;
+  I.height = 30;
+
+  I.xInicial = I.x;
+  I.yInicial = I.y;
+
+  I.color = "#212121";
+
+
+	I.draw = function() {
+    	ctx.fillStyle = this.color;
+    	ctx.fillRect(this.x, this.y, this.width, this.height);
+  	};
+
+
+  	I.update = function() {
+  		I.x = I.xInicial + xInimigos;
+    	I.y = I.yInicial + yInimigos;
+  	};
+
+  	I.explode = function() {
+        Sound.play("explosion");
+        
+        this.active = false;
+            // Extra Credit: Add an explosion graphic
+    };
+        
+  	return I;
+}; 
+
+function Bullet(I) {
+  I.active = true;
+
+
+  I.xVelocity = 0;
+  I.yVelocity = -I.speed;
+  I.width = 3;
+  I.height = 17;
+  I.color = "#212121";
+
+  I.draw = function() {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+  };
+
+  I.update = function() {
+    I.x += I.xVelocity;
+    I.y += I.yVelocity;
+
+    if(I.y < 0){
+    	I.active = false;
+    }
+
+  };
+
+  return I;
+}
+
+
+function colidiu(a, b) {
+  return a.x < b.x + b.width &&
+         a.x + a.width > b.x &&
+         a.y < b.y + b.height &&
+         a.y + a.height > b.y;
+}
+
+
+
 
 function draw() {
 	ctx.clearRect(0, 0, W, H);
@@ -100,15 +173,49 @@ function verificaPerda(){
 
 }
 
+function handleCollisions() {
+	
+
+	//verifica os inimigos que foram atingidos e marcam eles com false
+	if(bullet != null){
+    	enemies.forEach(function(enemy) {
+        	if(colidiu(bullet, enemy)) {
+            	bullet.y = -150;
+            	enemy.active = false;
+            	
+            	enemies = enemies.filter(function(enemy) {
+        			return enemy.active;
+    			});
+
+
+            	return;
+        	}
+    	});
+	}
+	//retira os inimigos que foram atingidos
+
+}
+
+
 function atualizar(){
 	desenhar();
 	movimentacaoInimigos();
 	verificaPerda();
+	//inimigos.draw();
+	//handleCollisions();
+
 
 	if(bullet != null){
 		bullet.update();
 		bullet.draw();
 	}
+
+	enemies.forEach(function(enemy) {
+        enemy.update();
+    });
+
+
+    handleCollisions();
 
 	window.requestAnimationFrame(atualizar);
 }
@@ -152,8 +259,6 @@ document.onclick = function(e){
 function atira(){
   audio.play();
 
-
-
   if(bullet == null || !bullet.active){
 
   	bullet = Bullet({
@@ -162,10 +267,7 @@ function atira(){
     	y: window.innerHeight - 210
   	});
 
-
   	bullet.draw();
-
-
   }
 
 }
@@ -175,11 +277,14 @@ function criaInimigos(){
 
 	 for (var i = 1; i < 14; i++) { 
 	 	for(var j = 1; j < 5; j++){
-	 		//enemies.push(Inimigos({
-	 		//	x = i*80;
-	 		//	y = 60*j
-	 		//}));
-	 		ctx.fillRect(xInimigos + i*80,60*j + yInimigos,50,50);
+			enemies.push(Enemy({
+    			x: i*80,
+    			y: 60*j
+  			}));
+
+
+
+	 		//ctx.fillRect(xInimigos + i*80,60*j + yInimigos,50,50);
 	 	}
 	 }
 }
@@ -192,19 +297,16 @@ function desenhar(){
 	ctx.drawImage(image,x,window.innerHeight - 210,125,155);
 	backgroundMusic.play();
 
-	criaInimigos();
+    enemies.forEach(function(enemy) {
+        enemy.draw();
+    });
 
-	//ctx.moveTo(300, 300);
-	//ctx.lineTo(280, 320);
-	//ctx.lineTo(300, 340);
-	//ctx.lineTo(320, 340);
-	//ctx.lineTo(340, 320);
-	//ctx.lineTo(320, 300);
 	ctx.fill();
 }
 
 function iniciar(){
 	criarTela();
+	criaInimigos();
 	atualizar();
 }
 
@@ -241,62 +343,3 @@ window.addEventListener("deviceorientation", function(event) {
 }, true);
 
 
-function Inimigos(I){
-	I.active = true;
-	I.width = 30;
-	I.height = 30;
-	I.color = "#212121";
-
-
-	I.draw = function() {
-    	ctx.fillStyle = this.color;
-    	ctx.fillRect(this.x, this.y, this.width, this.height);
-  	};
-
-
-  	I.update = function() {
-  		ctx.fillStyle = this.color;
-    	ctx.fillRect(this.x, this.y, this.width, this.height);
-  	};
-
-
-  	return I;
-}; 
-
-function Bullet(I) {
-  I.active = true;
-
-
-  I.xVelocity = 0;
-  I.yVelocity = -I.speed;
-  I.width = 3;
-  I.height = 17;
-  I.color = "#212121";
-
-  I.draw = function() {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-  };
-
-  I.update = function() {
-    I.x += I.xVelocity;
-    I.y += I.yVelocity;
-
-    if(I.y < 0){
-    	I.active = false;
-    }
-
-  };
-
-
-
-  return I;
-}
-
-
-function collides(a, b) {
-  return a.x < b.x + b.width &&
-         a.x + a.width > b.x &&
-         a.y < b.y + b.height &&
-         a.y + a.height > b.y;
-}
