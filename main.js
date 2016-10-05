@@ -6,8 +6,17 @@ var image, audio, backgroundMusic;
 
 var xInimigos = 90;
 var yInimigos = 0;
+var yAntigo = 0;
 
 var andandoSentido = 0;
+
+
+var enemies = [];
+
+
+var bullet;
+
+
 
 /*
 	0 andando para direita
@@ -15,7 +24,6 @@ var andandoSentido = 0;
 	2 andando para esquerda
 	3 andando para cima
 */
-
 
 function draw() {
 	ctx.clearRect(0, 0, W, H);
@@ -43,9 +51,8 @@ function criarTela(){
 	x = window.innerWidth/2 - 120;
 }
 
-function atualizar(){
-	desenhar();
-	
+function movimentacaoInimigos(){
+
 	//anda para direita
 	if(andandoSentido == 0){
 		if(xInimigos < 200){
@@ -55,19 +62,17 @@ function atualizar(){
 		}
 	}
 
-
 	//anda para baixo
-
 	if(andandoSentido == 1){
-		if(yInimigos < 50){
+		if(yInimigos - yAntigo < 50){
 			yInimigos++;
 		}else{
+			yAntigo = yInimigos;
 			andandoSentido++;
 		}
 	}
 
 	//andando para esquerda
-
 	if(andandoSentido == 2){
 		if(xInimigos > -90){
 			xInimigos--;
@@ -76,18 +81,33 @@ function atualizar(){
 		}
 	}
 
-	//andando para cima
+	// anda para baixo de novo
 	if(andandoSentido == 3){
-		if(yInimigos > -50){
-			yInimigos--;
+		if(yInimigos - yAntigo < 50){
+			yInimigos++;
 		}else{
 			andandoSentido = 0;
+			yAntigo = yInimigos;
 		}
 	}
 
+}
 
+function verificaPerda(){
+	if(yInimigos + 60 > window.innerHeight - 200){
+		alert('PERDEU');
+	}
 
+}
 
+function atualizar(){
+	desenhar();
+	movimentacaoInimigos();
+	verificaPerda();
+	if(bullet != null){
+		bullet.update();
+		bullet.draw();
+	}
 
 	window.requestAnimationFrame(atualizar);
 }
@@ -129,7 +149,24 @@ document.onclick = function(e){
 }
 
 function atira(){
-	audio.play();
+  audio.play();
+
+
+
+  if(bullet == null || !bullet.active){
+
+  	bullet = Bullet({
+    	speed: 10,
+    	x: x + 60,
+    	y: window.innerHeight - 210
+  	});
+
+
+  	bullet.draw();
+
+
+  }
+
 }
 
 
@@ -140,9 +177,6 @@ function criaInimigos(){
 	 		ctx.fillRect(xInimigos + i*80,60*j + yInimigos,50,50);
 	 	}
 	 }
-
-
-
 }
 
 function desenhar(){
@@ -151,11 +185,9 @@ function desenhar(){
 	ctx.fillStyle = "hsl(180,100%,50%)";
 	ctx.fillRect(x,window.innerHeight - 200,120,120);
 	ctx.drawImage(image,x,window.innerHeight - 210,125,155);
-
 	backgroundMusic.play();
 
 	criaInimigos();
-
 
 	//ctx.moveTo(300, 300);
 	//ctx.lineTo(280, 320);
@@ -202,3 +234,51 @@ window.addEventListener("deviceorientation", function(event) {
     colocaX();
 
 }, true);
+
+
+function Inimigos(I){
+	I.width = 30;
+	I.height = 30;
+
+	I.draw = function{
+		ctx.fillRect(I.x,I.x, I.width,I.height);
+	}
+}; 
+
+function Bullet(I) {
+  I.active = true;
+
+
+  I.xVelocity = 0;
+  I.yVelocity = -I.speed;
+  I.width = 3;
+  I.height = 17;
+  I.color = "#212121";
+
+  I.draw = function() {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+  };
+
+  I.update = function() {
+    I.x += I.xVelocity;
+    I.y += I.yVelocity;
+
+    if(I.y < 0){
+    	I.active = false;
+    }
+
+  };
+
+
+
+  return I;
+}
+
+
+function collides(a, b) {
+  return a.x < b.x + b.width &&
+         a.x + a.width > b.x &&
+         a.y < b.y + b.height &&
+         a.y + a.height > b.y;
+}
