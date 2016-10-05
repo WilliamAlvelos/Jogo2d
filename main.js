@@ -104,6 +104,7 @@ function atualizar(){
 	desenhar();
 	movimentacaoInimigos();
 	verificaPerda();
+
 	if(bullet != null){
 		bullet.update();
 		bullet.draw();
@@ -174,6 +175,10 @@ function criaInimigos(){
 
 	 for (var i = 1; i < 14; i++) { 
 	 	for(var j = 1; j < 5; j++){
+	 		//enemies.push(Inimigos({
+	 		//	x = i*80;
+	 		//	y = 60*j
+	 		//}));
 	 		ctx.fillRect(xInimigos + i*80,60*j + yInimigos,50,50);
 	 	}
 	 }
@@ -237,12 +242,25 @@ window.addEventListener("deviceorientation", function(event) {
 
 
 function Inimigos(I){
+	I.active = true;
 	I.width = 30;
 	I.height = 30;
+	I.color = "#212121";
 
-	I.draw = function{
-		ctx.fillRect(I.x,I.x, I.width,I.height);
-	}
+
+	I.draw = function() {
+    	ctx.fillStyle = this.color;
+    	ctx.fillRect(this.x, this.y, this.width, this.height);
+  	};
+
+
+  	I.update = function() {
+  		ctx.fillStyle = this.color;
+    	ctx.fillRect(this.x, this.y, this.width, this.height);
+  	};
+
+
+  	return I;
 }; 
 
 function Bullet(I) {
