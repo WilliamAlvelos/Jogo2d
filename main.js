@@ -8,6 +8,8 @@ var xInimigos = 90;
 var yInimigos = 0;
 var yAntigo = 0;
 
+var pontos = 0;
+
 var andandoSentido = 0;
 
 //lista de inimigos
@@ -15,8 +17,6 @@ var enemies = [];
 
 //bala que so vai ser atirada uma vez pelo player
 var bullet;
-
-
 
 /*
 	0 andando para direita
@@ -50,8 +50,8 @@ function Enemy(I){
   	};
 
   	I.explode = function() {
-        Sound.play("explosion");
-        
+        //Sound.play("explosion");
+        pontos+=50;
         this.active = false;
             // Extra Credit: Add an explosion graphic
     };
@@ -181,12 +181,11 @@ function handleCollisions() {
     	enemies.forEach(function(enemy) {
         	if(colidiu(bullet, enemy)) {
             	bullet.y = -150;
-            	enemy.active = false;
+            	enemy.explode();
             	
             	enemies = enemies.filter(function(enemy) {
         			return enemy.active;
     			});
-
 
             	return;
         	}
@@ -201,9 +200,6 @@ function atualizar(){
 	desenhar();
 	movimentacaoInimigos();
 	verificaPerda();
-	//inimigos.draw();
-	//handleCollisions();
-
 
 	if(bullet != null){
 		bullet.update();
@@ -223,25 +219,11 @@ function atualizar(){
 
 
 
-document.onkeypress = function(e){ 
+function tecla(e){ 
 	if(e.which == 37){
-		x-=20;
+		x-=25;
 	}else if(e.which == 39){
-		x+=20;
-	}
-
-	if(e.which == 32){
-		atira();
-	}
-
-	colocaX();
-}
-
-document.onkeydown  = function(e){ 
-	if(e.which == 37){
-		x-=15;
-	}else if(e.which == 39){
-		x+=15;
+		x+=25;
 	}
 
 	if(e.which == 32){
@@ -257,10 +239,9 @@ document.onclick = function(e){
 }
 
 function atira(){
-  audio.play();
 
   if(bullet == null || !bullet.active){
-
+	audio.play();
   	bullet = Bullet({
     	speed: 10,
     	x: x + 60,
@@ -279,12 +260,8 @@ function criaInimigos(){
 	 	for(var j = 1; j < 5; j++){
 			enemies.push(Enemy({
     			x: i*80,
-    			y: 60*j
+    			y: j*60
   			}));
-
-
-
-	 		//ctx.fillRect(xInimigos + i*80,60*j + yInimigos,50,50);
 	 	}
 	 }
 }
@@ -292,9 +269,17 @@ function criaInimigos(){
 function desenhar(){
 	
 	ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
-	ctx.fillStyle = "hsl(180,100%,50%)";
+
+	ctx.font = '42px "Arcade"';
+    ctx.fillStyle = '#000';
+    //printa na tela os pontos do usuário
+	ctx.fillText(pontos,70,70);
+
+	
+	ctx.fillStyle = "#fff";
 	ctx.fillRect(x,window.innerHeight - 200,120,120);
 	ctx.drawImage(image,x,window.innerHeight - 210,125,155);
+	
 	backgroundMusic.play();
 
     enemies.forEach(function(enemy) {
@@ -310,7 +295,6 @@ function iniciar(){
 	atualizar();
 }
 
-window.addEventListener("load",iniciar);
 
 
 function colocaX(){
@@ -335,6 +319,8 @@ function colocaX(){
 }
 */
 
+//cria os eventos
+
 window.addEventListener("deviceorientation", function(event) {
     x = (((event.alpha+180)/360)*window.innerWidth)*1.8;
 
@@ -342,4 +328,19 @@ window.addEventListener("deviceorientation", function(event) {
 
 }, true);
 
+window.addEventListener("load",iniciar);
 
+window.addEventListener('keydown',this.tecla,true);
+
+window.addEventListener('keyup',this.tecla,true);
+
+window.addEventListener('keypressed',this.tecla,true);
+
+window.addEventListener('resize',this.resize,true);
+
+
+
+//re ajuste da tela
+function resize(e){
+	colocaX();
+}
