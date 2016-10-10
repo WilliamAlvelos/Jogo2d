@@ -18,6 +18,10 @@ var enemies = [];
 //bala que so vai ser atirada uma vez pelo player
 var bullet;
 
+//quando a hillary
+var hillary;
+
+
 /*
 	0 andando para direita
 	1 andando para baixo
@@ -29,13 +33,13 @@ function Enemy(I){
 	I = I || {};
 
   I.active = true;
-  I.width = 30;
-  I.height = 30;
+  I.width = 35;
+  I.height = 35;
 
   I.xInicial = I.x;
   I.yInicial = I.y;
 
-  I.color = "#212121";
+  I.color = "#000";
 
 
 	I.draw = function() {
@@ -59,6 +63,42 @@ function Enemy(I){
   	return I;
 }; 
 
+
+function Hillary(I){
+	I = I || {};
+
+  I.active = true;
+  I.height = 155;
+  I.width = 125;
+
+  I.x = 35;
+  I.y = 80;
+
+  I.color = "#262727";
+
+
+	I.draw = function() {
+    	ctx.fillStyle = this.color;
+    	ctx.fillRect(this.x, this.y, this.width, this.height);
+    	var HillaryImage = document.getElementById("hillary");
+    	ctx.drawImage(HillaryImage,this.x, this.y, this.width, this.height);
+  	};
+
+
+  	I.update = function() {
+  		I.x += 1; 
+  	};
+
+  	I.explode = function() {
+        //Sound.play("explosion");
+        pontos+=150;
+        this.active = false;
+        I.y = 4000;
+    };
+        
+  	return I;
+}; 
+
 function Bullet(I) {
   I.active = true;
 
@@ -67,7 +107,7 @@ function Bullet(I) {
   I.yVelocity = -I.speed;
   I.width = 3;
   I.height = 17;
-  I.color = "#212121";
+  I.color = "#000";
 
   I.draw = function() {
     ctx.fillStyle = this.color;
@@ -190,6 +230,20 @@ function handleCollisions() {
             	return;
         	}
     	});
+
+
+    	if(hillary != null){
+    		if(colidiu(bullet, hillary)) {
+            	bullet.y = -150;
+            	hillary.explode();
+            	
+            	enemies = enemies.filter(function(enemy) {
+        			return enemy.active;
+    			});
+
+            	return;
+        	}
+    	}
 	}
 	//retira os inimigos que foram atingidos
 
@@ -204,6 +258,11 @@ function atualizar(){
 	if(bullet != null){
 		bullet.update();
 		bullet.draw();
+	}
+
+	if(hillary != null){
+		hillary.update();
+		hillary.draw();
 	}
 
 	enemies.forEach(function(enemy) {
@@ -256,14 +315,21 @@ function atira(){
 
 function criaInimigos(){
 
-	 for (var i = 1; i < 14; i++) { 
-	 	for(var j = 1; j < 5; j++){
+	 for (var i = 1; i < 12; i++) { 
+	 	for(var j = 1; j < 6; j++){
 			enemies.push(Enemy({
-    			x: i*80,
-    			y: j*60
+    			x: i*50,
+    			y: j*50
   			}));
 	 	}
 	 }
+}
+
+
+
+function criaHillary(){
+	hillary = Hillary();
+    hillary.draw();
 }
 
 function desenhar(){
@@ -276,7 +342,7 @@ function desenhar(){
 	ctx.fillText(pontos,70,70);
 
 	
-	ctx.fillStyle = "#fff";
+	ctx.fillStyle = "#262727";
 	ctx.fillRect(x,window.innerHeight - 200,120,120);
 	ctx.drawImage(image,x,window.innerHeight - 210,125,155);
 	
@@ -285,6 +351,12 @@ function desenhar(){
     enemies.forEach(function(enemy) {
         enemy.draw();
     });
+
+    if(hillary == null || !hillary.active){
+		if(Math.random() < 0.001){
+			criaHillary();
+		}
+    }
 
 	ctx.fill();
 }
@@ -296,7 +368,7 @@ function iniciar(){
 }
 
 
-
+/*
 function colocaX(){
 	if(x > (window.innerWidth - 120)){
 		x = window.innerWidth - 120;
@@ -305,8 +377,8 @@ function colocaX(){
 		x = 0;
 	}
 }
+*/
 
-/*
 //caso queria colocar para o trump passar para o outro lado
 
 function colocaX(){
@@ -317,7 +389,7 @@ function colocaX(){
 		x += window.innerWidth - 120;
 	}
 }
-*/
+
 
 //cria os eventos
 

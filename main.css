@@ -4,3 +4,8 @@
     font-family: 'Arcade';
     src: url('assets/fonts/crackman.ttf');
 }
+
+body{
+
+  background-color: #262727;
+}
