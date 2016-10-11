@@ -169,7 +169,7 @@ function movimentacaoInimigos(){
 	//anda para direita
 	if(andandoSentido == 0){
 		if(xInimigos < 200){
-			xInimigos++;
+			xInimigos+=0.3;
 		}else{
 			andandoSentido = 1;
 		}
@@ -178,7 +178,7 @@ function movimentacaoInimigos(){
 	//anda para baixo
 	if(andandoSentido == 1){
 		if(yInimigos - yAntigo < 50){
-			yInimigos++;
+			yInimigos+=0.3;
 		}else{
 			yAntigo = yInimigos;
 			andandoSentido++;
@@ -188,7 +188,7 @@ function movimentacaoInimigos(){
 	//andando para esquerda
 	if(andandoSentido == 2){
 		if(xInimigos > -90){
-			xInimigos--;
+			xInimigos-=0.3;
 		}else{
 			andandoSentido = 3;
 		}
@@ -197,7 +197,7 @@ function movimentacaoInimigos(){
 	// anda para baixo de novo
 	if(andandoSentido == 3){
 		if(yInimigos - yAntigo < 50){
-			yInimigos++;
+			yInimigos+=0.3;
 		}else{
 			andandoSentido = 0;
 			yAntigo = yInimigos;
@@ -318,8 +318,8 @@ function criaInimigos(){
 	 for (var i = 1; i < 12; i++) { 
 	 	for(var j = 1; j < 6; j++){
 			enemies.push(Enemy({
-    			x: i*50,
-    			y: j*50
+    			x: i*55 + 300,
+    			y: j*55 + 100
   			}));
 	 	}
 	 }
