@@ -2,7 +2,7 @@ var canvas, ctx;
 
 var x = 10;
 
-var image, audio, backgroundMusic;
+var image, audio,perdaAudio, backgroundMusic;
 
 var xInimigos = 90;
 var yInimigos = 0;
@@ -14,6 +14,9 @@ var andandoSentido = 0;
 
 //lista de inimigos
 var enemies = [];
+
+//Array dos tiros dos inimigoss
+var bulletEnimies = [];
 
 //bala que so vai ser atirada uma vez pelo player
 var bullet;
@@ -114,6 +117,15 @@ function Bullet(I) {
     ctx.fillRect(this.x, this.y, this.width, this.height);
   };
 
+  I.updateEnemy = function(){
+	I.x -= I.xVelocity;
+    I.y -= I.yVelocity;
+
+    if(I.y < 0){
+    	I.active = false;
+    }
+  }
+
   I.update = function() {
     I.x += I.xVelocity;
     I.y += I.yVelocity;
@@ -133,6 +145,15 @@ function colidiu(a, b) {
          a.x + a.width > b.x &&
          a.y < b.y + b.height &&
          a.y + a.height > b.y;
+}
+
+
+function colidiuComTrump(a){
+	var yTrump = window.innerHeight - 200;
+	return a.x < x + 125 &&
+         a.x + a.width > x &&
+         a.y < yTrump + 155 &&
+         a.y + a.height > yTrump;
 }
 
 
@@ -156,9 +177,9 @@ function criarTela(){
 	canvas.style.left = "0px";
 	document.body.appendChild(canvas);
 	ctx = canvas.getContext("2d");
-
-	audio = document.getElementById("audio");
 	image = document.getElementById("trump");
+	audio = document.getElementById("audio");
+	perdaAudio = document.getElementById("fired");
 	backgroundMusic = document.getElementById("backgroundMusic");
 
 	x = window.innerWidth/2 - 120;
@@ -245,7 +266,40 @@ function handleCollisions() {
         	}
     	}
 	}
-	//retira os inimigos que foram atingidos
+
+
+
+	//verificar se alguma bala colidiu no trump
+	bulletEnimies.forEach(function(be) {
+        if(colidiuComTrump(be)) {
+            be.y += window.innerHeight;
+            perdaAudio.play();
+            perda();
+            //trump falando algo engracadao	
+            //tela de perda
+
+            return;
+        }
+   	});
+
+   	//verifica se algum inimigo encostou nele
+   	enemies.forEach(function(enemy){
+		if(colidiuComTrump(enemy)) {
+            //enemy.explode();
+            perdaAudio.play();
+            perda();
+            //trump falando algo engracadao	
+            //tela de perda
+
+            return;
+        }
+   	});
+
+
+}
+
+function perda(){
+	alert('Parabens você fez 10 pontos');
 
 }
 
@@ -267,6 +321,11 @@ function atualizar(){
 
 	enemies.forEach(function(enemy) {
         enemy.update();
+    });
+
+
+    bulletEnimies.forEach(function(be) {
+        be.updateEnemy();
     });
 
 
@@ -352,14 +411,38 @@ function desenhar(){
         enemy.draw();
     });
 
+
+
+
+    //cria a hillary se nao existir outra no cenario
     if(hillary == null || !hillary.active){
 		if(Math.random() < 0.001){
 			criaHillary();
 		}
     }
 
+
+    if(Math.random() < 0.01){
+    	inimigoAtira();
+    }
+
+
+    bulletEnimies.forEach(function(be){
+    	be.draw();
+    });
+
 	ctx.fill();
 }
+
+function inimigoAtira(){
+	//cria o tiro inimigo
+	bulletEnimies.push(Bullet({
+		speed: 10,
+    	x: 300,
+    	y: 100
+  	}));
+}
+
 
 function iniciar(){
 	criarTela();

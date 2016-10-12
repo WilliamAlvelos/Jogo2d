@@ -6,6 +6,27 @@
 }
 
 body{
-
+  font-weight: bold;
+  font-family: 'Arcade';
+  color: #fff;
   background-color: #262727;
+}
+
+
+.playButton{
+	font-family: 'Arcade';
+	height: 15%;
+	width: 30%;
+	margin: 70px;
+}
+
+.playButton:hover{
+	background-color: #252525;
+	color: #fff;
+}
+
+.trumpIndex:hover{
+	-ms-transform: rotate(7deg); /* IE 9 */
+    -webkit-transform: rotate(7deg); /* Chrome, Safari, */
+    transform: rotate(7deg);
 }
