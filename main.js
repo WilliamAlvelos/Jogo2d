@@ -42,12 +42,14 @@ function Enemy(I){
   I.xInicial = I.x;
   I.yInicial = I.y;
 
-  I.color = "#000";
+  I.color = "#262727";
 
 
 	I.draw = function() {
     	ctx.fillStyle = this.color;
     	ctx.fillRect(this.x, this.y, this.width, this.height);
+    	var HillaryImage = document.getElementById("hillary");
+    	ctx.drawImage(HillaryImage,this.x, this.y, this.width, this.height);
   	};
 
 
@@ -71,11 +73,11 @@ function Hillary(I){
 	I = I || {};
 
   I.active = true;
-  I.height = 155;
-  I.width = 125;
+  I.height = 55;
+  I.width = 45;
 
   I.x = 35;
-  I.y = 80;
+  I.y = 40;
 
   I.color = "#262727";
 
@@ -149,10 +151,10 @@ function colidiu(a, b) {
 
 
 function colidiuComTrump(a){
-	var yTrump = window.innerHeight - 200;
-	return a.x < x + 125 &&
+	var yTrump = window.innerHeight - 80;
+	return a.x < x + 50 &&
          a.x + a.width > x &&
-         a.y < yTrump + 155 &&
+         a.y < yTrump + 50 &&
          a.y + a.height > yTrump;
 }
 
@@ -299,8 +301,8 @@ function handleCollisions() {
 }
 
 function perda(){
-	alert('Parabens você fez 10 pontos');
-
+	alert('Parabens você fez ' + pontos + ' pontos');
+	window.location.href='../Jogo2d/index.html';
 }
 
 
@@ -362,8 +364,8 @@ function atira(){
 	audio.play();
   	bullet = Bullet({
     	speed: 10,
-    	x: x + 60,
-    	y: window.innerHeight - 210
+    	x: x + 25,
+    	y: window.innerHeight - 80
   	});
 
   	bullet.draw();
@@ -377,8 +379,8 @@ function criaInimigos(){
 	 for (var i = 1; i < 12; i++) { 
 	 	for(var j = 1; j < 6; j++){
 			enemies.push(Enemy({
-    			x: i*55 + 300,
-    			y: j*55 + 100
+    			x: i*55 + 100,
+    			y: j*55 + 50
   			}));
 	 	}
 	 }
@@ -402,8 +404,8 @@ function desenhar(){
 
 	
 	ctx.fillStyle = "#262727";
-	ctx.fillRect(x,window.innerHeight - 200,120,120);
-	ctx.drawImage(image,x,window.innerHeight - 210,125,155);
+	ctx.fillRect(x,window.innerHeight - 80,50,50);
+	ctx.drawImage(image,x,window.innerHeight - 80,55,68);
 	
 	backgroundMusic.play();
 
@@ -421,10 +423,7 @@ function desenhar(){
 		}
     }
 
-
-    if(Math.random() < 0.01){
-    	inimigoAtira();
-    }
+    inimigoAtira();
 
 
     bulletEnimies.forEach(function(be){
@@ -436,11 +435,15 @@ function desenhar(){
 
 function inimigoAtira(){
 	//cria o tiro inimigo
-	bulletEnimies.push(Bullet({
-		speed: 10,
-    	x: 300,
-    	y: 100
-  	}));
+	enemies.forEach(function(e){
+		if(Math.random() < 0.0001){
+			bulletEnimies.push(Bullet({
+				speed: 10,
+    			x: e.x + 17,
+    			y: e.y
+  			}));
+		}
+	})	
 }
 
 
@@ -451,7 +454,7 @@ function iniciar(){
 }
 
 
-/*
+
 function colocaX(){
 	if(x > (window.innerWidth - 120)){
 		x = window.innerWidth - 120;
@@ -460,10 +463,10 @@ function colocaX(){
 		x = 0;
 	}
 }
-*/
+
 
 //caso queria colocar para o trump passar para o outro lado
-
+/*
 function colocaX(){
 	if(x > (window.innerWidth - 120)){
 		x= 0;
@@ -471,7 +474,7 @@ function colocaX(){
 	if(x < 0){
 		x += window.innerWidth - 120;
 	}
-}
+}*/
 
 
 //cria os eventos
