@@ -1,5 +1,10 @@
 /* TRABALHO DESENVOLVIDO PELOS ALUNOS DE BCC DO 6 SEMESTRE */
 
+/*html, body {
+  height: 100%;
+  width: 100%;
+}*/
+
 @font-face {
     font-family: 'Arcade';
     src: url('assets/fonts/crackman.ttf');
@@ -9,7 +14,10 @@ body{
   font-weight: bold;
   font-family: 'Arcade';
   color: #fff;
-  background-color: #262727;
+  /*background-color: #555;*/
+  background-image: url('assets/img/back.jpg');
+  background-size: 100%;
+  background-repeat: no-repeat;
 }
 
 
