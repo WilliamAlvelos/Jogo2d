@@ -25,6 +25,9 @@ var bullet;
 var hillary;
 
 
+var haveEnemy = 0;
+
+
 /*
 	0 andando para direita
 	1 andando para baixo
@@ -42,7 +45,7 @@ function Enemy(I){
   I.xInicial = I.x;
   I.yInicial = I.y;
 
-  I.color = "#262727";
+  I.color = 'rgba(0,0,0,0)';
 
 
 	I.draw = function() {
@@ -79,13 +82,13 @@ function Hillary(I){
   I.x = 35;
   I.y = 40;
 
-  I.color = "#262727";
+  I.color = 'rgba(0,0,0,0)';
 
 
 	I.draw = function() {
     	ctx.fillStyle = this.color;
     	ctx.fillRect(this.x, this.y, this.width, this.height);
-    	var HillaryImage = document.getElementById("hillary");
+    	var HillaryImage = document.getElementById("obama");
     	ctx.drawImage(HillaryImage,this.x, this.y, this.width, this.height);
   	};
 
@@ -229,12 +232,6 @@ function movimentacaoInimigos(){
 
 }
 
-function verificaPerda(){
-	if(yInimigos + 60 > window.innerHeight - 200){
-		alert('PERDEU');
-	}
-
-}
 
 function handleCollisions() {
 	
@@ -297,6 +294,7 @@ function handleCollisions() {
         }
    	});
 
+    haveEnemy = 0;
 
 }
 
@@ -309,7 +307,6 @@ function perda(){
 function atualizar(){
 	desenhar();
 	movimentacaoInimigos();
-	verificaPerda();
 
 	if(bullet != null){
 		bullet.update();
@@ -321,10 +318,18 @@ function atualizar(){
 		hillary.draw();
 	}
 
-	enemies.forEach(function(enemy) {
-        enemy.update();
-    });
 
+	enemies.forEach(function(enemy) {
+    if(enemy.active == true)
+    {
+      haveEnemy =1;
+    }
+        enemy.update();
+  });
+
+  if (haveEnemy==0){
+    criaInimigos();
+  } 
 
     bulletEnimies.forEach(function(be) {
         be.updateEnemy();
@@ -341,9 +346,9 @@ function atualizar(){
 
 function tecla(e){ 
 	if(e.which == 37){
-		x-=25;
+		x-=15;
 	}else if(e.which == 39){
-		x+=25;
+		x+=15;
 	}
 
 	if(e.which == 32){
@@ -398,12 +403,12 @@ function desenhar(){
 	ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
 
 	ctx.font = '42px "Arcade"';
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = '#fff';
     //printa na tela os pontos do usuário
 	ctx.fillText(pontos,70,70);
 
 	
-	ctx.fillStyle = "#262727";
+	ctx.fillStyle = 'rgba(0,0,0,0)';
 	ctx.fillRect(x,window.innerHeight - 80,50,50);
 	ctx.drawImage(image,x,window.innerHeight - 80,55,68);
 	
@@ -438,7 +443,7 @@ function inimigoAtira(){
 	enemies.forEach(function(e){
 		if(Math.random() < 0.0001){
 			bulletEnimies.push(Bullet({
-				speed: 10,
+				speed: 8,
     			x: e.x + 17,
     			y: e.y
   			}));
